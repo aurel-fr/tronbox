@@ -7,12 +7,16 @@ const expect = require('@truffle/expect');
 const Deployer = require('../Deployer');
 
 const TronWrap = require('../TronWrap');
+const Graph = require('./graph');
 const logErrorAndExit = require('../TronWrap').logErrorAndExit;
 let tronWrap;
 
 function Migration(file) {
   this.file = path.resolve(file);
-  this.number = parseInt(path.basename(file));
+  const num = parseInt(path.basename(file));
+  // if the file is not prefixed with a number just assign -1 as the number
+  if (isNaN(num)) this.number = -1;
+  else this.number = num;
 }
 
 Migration.prototype.run = function (options, callback) {
@@ -107,16 +111,41 @@ const Migrate = {
 
       options.allowed_extensions = options.allowed_extensions || /^\.(js|es6?)$/;
 
-      let migrations = files
-        .filter(function (file) {
-          return isNaN(parseInt(path.basename(file))) === false;
-        })
+      files = files
         .filter(function (file) {
           return path.extname(file).match(options.allowed_extensions) != null;
         })
-        .map(function (file) {
-          return new Migration(file, options.network);
+        .filter(function (file) {
+          const baseName = path.basename(file);
+          // allow files that starts with a number or an uppercase char
+          return isNaN(parseInt(baseName)) === false || baseName.charAt(0).toUpperCase() === baseName.charAt(0);
         });
+
+      let migrations = files.map(function (file) {
+        return new Migration(file, options.network);
+      });
+
+      const graph = Graph.build(migrations);
+      if (graph.length > 0) {
+        process.stdout.write('migrations files have dependencies, performing topological sort\n');
+        const sorted_files = Graph.toposort(files, graph);
+        if (sorted_files.length !== migrations.length) {
+          throw new Error('topological sort omitted some files, aborting...');
+        }
+        // let's reset the number to make them monotonically increasing
+        // let's keep in mind that topolical sorting return leaf node at the end of the list
+        // yet leaf nodes contract must be the first to deploy, since the graph represents dependencies
+        // therefore we will reverse the ordering of the list
+        const hashmap = new Map(); // useful for doing this in O(n)
+        for (const migration of migrations) hashmap.set(migration.file, migration);
+        for (let i = 0; i < sorted_files.length; i++) {
+          const migration = hashmap.get(sorted_files[i]);
+          if (typeof migration == undefined) {
+            throw new Error('file path was altered while build graph or topological sort');
+          }
+          migration.number = sorted_files.length - i;
+        }
+      }
 
       // Make sure to sort the prefixes as numbers and not strings.
       migrations = migrations.sort(function (a, b) {
