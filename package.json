@@ -13,6 +13,7 @@
   "scripts": {
     "build": "scripts/build.sh",
     "test": "npm run build && cd test && sh runTest.sh",
+    "unit-test": "mocha 'src/**/*.test.js'",
     "prepare": "npm run build",
     "lint": "find src -name '*.js' | xargs node_modules/.bin/eslint",
     "format": "prettier --write \"src/**/*.js\" \"test/**/*.js\""
@@ -61,6 +62,7 @@
     "spawn-args": "^0.1.0",
     "superagent": "^5.1.0",
     "temp": "^0.8.3",
+    "toposort": "^2.0.2",
     "tronweb": "^5.3.0",
     "tsort": "^0.0.1",
     "vcsurl": "^0.1.1",
