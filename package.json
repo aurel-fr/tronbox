@@ -16,7 +16,9 @@
     "unit-test": "mocha 'src/**/*.test.js'",
     "prepare": "npm run build",
     "lint": "find src -name '*.js' | xargs node_modules/.bin/eslint",
-    "format": "prettier --write \"src/**/*.js\" \"test/**/*.js\""
+    "format": "prettier --write \"src/**/*.js\" \"test/**/*.js\"",
+    "up": "docker-compose up",
+    "down": "docker-compose down --volumes"
   },
   "dependencies": {
     "@babel/parser": "^7.23.0",
