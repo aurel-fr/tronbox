@@ -7,6 +7,7 @@ module.exports = {
     tokenValue: undefined,
     tokenId: undefined,
     from: undefined,
+    // Ken's patch
     privateKey: undefined
   }
 };
