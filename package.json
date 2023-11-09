@@ -19,6 +19,9 @@
     "format": "prettier --write \"src/**/*.js\" \"test/**/*.js\""
   },
   "dependencies": {
+    "@babel/parser": "^7.23.0",
+    "@babel/traverse": "^7.23.2",
+    "@babel/types": "^7.23.0",
     "@noble/secp256k1": "1.7.1",
     "@resolver-engine/imports-fs": "^0.3.3",
     "@solidity-parser/parser": "^0.16.0",
