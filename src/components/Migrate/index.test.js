@@ -10,10 +10,10 @@ describe('assemble function', function () {
       migrations_directory: path.resolve('test/fixtures/migrations'),
       allowed_extensions: /^\.(js)$/
     };
-    const expected = [-1, 3, 5, 6, 7, 10];
+    const expected = [3, 5, 6, 7, 10];
     Migrate.assemble(options, (err, migrations) => {
       expect(err).to.be.null;
-      expect(migrations).to.have.lengthOf(6);
+      expect(migrations).to.have.lengthOf(5);
       for (let i = 0; i < migrations.length; i++) {
         expect(migrations[i].number).to.equal(expected[i]);
       }
