@@ -10,12 +10,13 @@ const TronWrap = require('../TronWrap');
 const Graph = require('./graph');
 const logErrorAndExit = require('../TronWrap').logErrorAndExit;
 let tronWrap;
+// if the file is not prefixed with a number just assign -1 as the number
+const not_prefixed = -1;
 
 function Migration(file) {
   this.file = path.resolve(file);
   const num = parseInt(path.basename(file));
-  // if the file is not prefixed with a number just assign -1 as the number
-  if (isNaN(num)) this.number = -1;
+  if (isNaN(num)) this.number = not_prefixed;
   else this.number = num;
 }
 
@@ -126,7 +127,8 @@ const Migrate = {
       });
 
       const graph = Graph.build(migrations);
-      if (graph.length > 0) {
+      if (graph.length === 0) migrations = migrations.filter(({ number }) => number !== not_prefixed);
+      else {
         process.stdout.write('migrations files have dependencies, performing topological sort\n');
         const sorted_files = Graph.toposort(files, graph);
         if (sorted_files.length !== migrations.length) {
