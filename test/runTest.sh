@@ -6,6 +6,12 @@ rm -rf build
 ../../tronbox.dev test
 cd ..
 
+echo 'Test abiv2 with deps'
+cd abiv2_with_deps
+rm -rf build
+../../tronbox.dev test
+cd ..
+
 echo 'Test tre'
 cd tre
 rm -rf build

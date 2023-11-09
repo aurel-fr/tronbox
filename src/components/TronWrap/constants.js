@@ -6,6 +6,7 @@ module.exports = {
     callValue: 0,
     tokenValue: undefined,
     tokenId: undefined,
-    from: undefined
+    from: undefined,
+    privateKey: undefined
   }
 };
